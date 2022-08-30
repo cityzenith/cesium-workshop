@@ -1,3 +1,9 @@
+import Axios from 'axios'
+
+const Accept = 'application/json'
+Axios.defaults.baseURL = 'http://localhost:8000'
+Axios.defaults.headers = { Accept }
+
 (function () {
     "use strict";
 
@@ -128,6 +134,8 @@
     // Load neighborhood boundaries from a GeoJson file
     // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
     var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
+
+    var overpassPromise = Axios.get('/search', { params: { persist: false, id: '123,456,789' }})
 
     // Save an new entity collection of neighborhood data
     var neighborhoods;
