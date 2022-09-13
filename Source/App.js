@@ -127,7 +127,7 @@
     };
     // Load neighborhood boundaries from a GeoJson file
     // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
-    var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
+    var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/Building_footprints_2020_Energy.geojson', geojsonOptions);
 
     // Save an new entity collection of neighborhood data
     var neighborhoods;
