@@ -44,7 +44,7 @@
     viewer.scene.globe.enableLighting = true;
 
     // Create an initial camera view
-    var initialPosition = new Cesium.Cartesian3.fromDegrees(-73.998114468289017509, 40.674512895646692812, 2631.082799425431);
+    var initialPosition = new Cesium.Cartesian3.fromDegrees(144.962432, -37.814958, 140.3);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(7.1077496389876024807, -31.987223091598949054, 0.025883251314954971306);
     var homeCameraView = {
         destination : initialPosition,
@@ -82,7 +82,7 @@
     // Loading and Styling Entity Data
     //////////////////////////////////////////////////////////////////////////
 
-    var kmlOptions = {
+    /*var kmlOptions = {
         camera : viewer.scene.camera,
         canvas : viewer.scene.canvas,
         clampToGround : true
@@ -120,7 +120,7 @@
                 entity.description = description;
             }
         }
-    });
+    }); */
 
     var geojsonOptions = {
         clampToGround : true
@@ -173,7 +173,7 @@
     });
 
     // Load a drone flight path from a CZML file
-    var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
+   /* var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
 
     // Save a new drone model entity
     var drone;
@@ -198,14 +198,14 @@
             interpolationDegree : 2
         });
         drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
-    });
+    });*/
 
     //////////////////////////////////////////////////////////////////////////
     // Load 3D Tileset
     //////////////////////////////////////////////////////////////////////////
 
     // Load the NYC buildings tileset
-    var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(75343) }));
+   // var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(75343) }));
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -283,8 +283,8 @@
     // Setup Camera Modes
     //////////////////////////////////////////////////////////////////////////
 
-    var freeModeElement = document.getElementById('freeMode');
-    var droneModeElement = document.getElementById('droneMode');
+   /* var freeModeElement = document.getElementById('freeMode');
+   var droneModeElement = document.getElementById('droneMode');
 
     // Create a follow camera by tracking the drone entity
     function setViewMode() {
@@ -304,22 +304,22 @@
             freeModeElement.checked = false;
             droneModeElement.checked = true;
         }
-    });
+    });*/
 
     //////////////////////////////////////////////////////////////////////////
     // Setup Display Options
     //////////////////////////////////////////////////////////////////////////
 
     var shadowsElement = document.getElementById('shadows');
-    var neighborhoodsElement =  document.getElementById('neighborhoods');
+    //var neighborhoodsElement =  document.getElementById('neighborhoods');
 
     shadowsElement.addEventListener('change', function (e) {
         viewer.shadows = e.target.checked;
     });
 
-    neighborhoodsElement.addEventListener('change', function (e) {
+    /*neighborhoodsElement.addEventListener('change', function (e) {
         neighborhoods.show = e.target.checked;
-    });
+    });*/
 
     // Finally, wait for the initial city to be ready before removing the loading indicator.
     var loadingIndicator = document.getElementById('loadingIndicator');
