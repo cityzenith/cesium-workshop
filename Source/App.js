@@ -19,29 +19,29 @@
     //////////////////////////////////////////////////////////////////////////
 
     // Remove default base layer
-    viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
+    //viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
 
     // Add Sentinel-2 imagery
-    viewer.imageryLayers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3954 }));
+    //viewer.imageryLayers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3954 }));
 
     //////////////////////////////////////////////////////////////////////////
     // Loading Terrain
     //////////////////////////////////////////////////////////////////////////
 
     // Load Cesium World Terrain
-    viewer.terrainProvider = Cesium.createWorldTerrain({
+   /* viewer.terrainProvider = Cesium.createWorldTerrain({
         requestWaterMask : true, // required for water effects
         requestVertexNormals : true // required for terrain lighting
     });
     // Enable depth testing so things behind the terrain disappear.
-    viewer.scene.globe.depthTestAgainstTerrain = true;
+    viewer.scene.globe.depthTestAgainstTerrain = true;*/
 
     //////////////////////////////////////////////////////////////////////////
     // Configuring the Scene
     //////////////////////////////////////////////////////////////////////////
 
     // Enable lighting based on sun/moon positions
-    viewer.scene.globe.enableLighting = true;
+    //viewer.scene.globe.enableLighting = true;
 
     // Create an initial camera view
     var initialPosition = new Cesium.Cartesian3.fromDegrees(144.962432, -37.814958, 140.3);
@@ -69,14 +69,14 @@
     });
 
     // Set up clock and timeline.
-    viewer.clock.shouldAnimate = true; // default
+   /* viewer.clock.shouldAnimate = true; // default
     viewer.clock.startTime = Cesium.JulianDate.fromIso8601("2017-07-11T16:00:00Z");
     viewer.clock.stopTime = Cesium.JulianDate.fromIso8601("2017-07-11T16:20:00Z");
     viewer.clock.currentTime = Cesium.JulianDate.fromIso8601("2017-07-11T16:00:00Z");
     viewer.clock.multiplier = 2; // sets a speedup
     viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; // tick computation mode
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; // loop at the end
-    viewer.timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime); // set visible range
+    viewer.timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime); // set visible range */
 
     //////////////////////////////////////////////////////////////////////////
     // Loading and Styling Entity Data
@@ -121,8 +121,90 @@
             }
         }
     }); */
-
     var geojsonOptions = {
+        clampToGround : true
+    };
+  
+    var promise = Cesium.GeoJsonDataSource.load('./Source/SampleData/Building_footprints_2020_Energy.geojson', geojsonOptions);
+  
+      
+    //var neighborhoods;
+    promise
+    .then(function (dataSource) {
+      viewer.dataSources.add(dataSource);
+
+      //Get the array of entities
+      const entities = dataSource.entities.values;
+
+      const colorHash = {};
+     // console.log("Height:"+ entities.length);
+      for (let i = 0; i < entities.length; i++)
+       {        
+        const entity = entities[i];
+        //const name = entity.properties.height;        
+       const energy = entity.properties.total_2021;
+       let color = colorHash[energy];
+      
+        if (!color) {            
+           // alert("Height:"+ Height.height);
+          // alert(i +"--Height:"+Height+" conndition:"+(Height > 10));
+          if (energy >=23915.7 && energy <=34438.101563) {
+            color = Cesium.Color.RED.withAlpha(0.7);
+            colorHash[energy] = color;
+        } else if (energy >=17200.3 && energy <=23915.599609)   {
+            color = Cesium.Color.DARKSEAGREEN.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=10626 && energy <=17200.000000)   {
+            color = Cesium.Color.DARKCYAN.withAlpha(0.9);
+            colorHash[energy] = color;               
+        }else if (energy >=5889 && energy <=10625.900391)   {
+            color = Cesium.Color.GREENYELLOW.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=3570 && energy <=5888.720215)   {
+            color = Cesium.Color.AQUAMARINE.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=2041.5 && energy <=3569.399902)   {
+            color = Cesium.Color.GOLD.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=980 && energy <=2041.060059)   {
+            color = Cesium.Color.CRIMSON.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=681.5 && energy <=979.310974)   {
+            color = Cesium.Color.CORNFLOWERBLUE.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=303 && energy <=681)   {
+            color = Cesium.Color.LIGHTGREEN.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=101 && energy <=302.710999)   {
+            color = Cesium.Color.LIGHTSEAGREEN.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else if (energy >=0 && energy <=100.5)   {
+            color = Cesium.Color.LIGHTBLUE.withAlpha(0.9);
+            colorHash[energy] = color;               
+        } else {           
+            color = Cesium.Color.MAROON.withAlpha(0.9);
+            colorHash[energy] = color;        
+        }       
+          
+        } 
+        //else alert("else")
+
+        //Set the polygon material to our random color.
+        entity.polygon.material = color;
+        //Remove the outlines.
+        entity.polygon.outline = false;
+
+        //Extrude the polygon using height
+        entity.polygon.extrudedHeight = entity.properties.height;
+      }
+    })
+    .catch(function (error) {
+      //Display any errrors encountered while loading.
+      window.alert(error);
+      
+    });
+  
+   /* var geojsonOptions = {
         clampToGround : true
     };
     // Load neighborhood boundaries from a GeoJson file
@@ -140,10 +222,12 @@
         var neighborhoodEntities = dataSource.entities.values;
         for (var i = 0; i < neighborhoodEntities.length; i++) {
             var entity = neighborhoodEntities[i];
+            entity.polygon.extrudedHeight =
+            entity.properties.height;
 
             if (Cesium.defined(entity.polygon)) {
                 // Use kml neighborhood value as entity name
-                entity.name = entity.properties.neighborhood;
+                entity.name = entity.properties.tier;
                 // Set the polygon material to a random, translucent color
                 entity.polygon.material = Cesium.Color.fromRandom({
                     red : 0.1,
@@ -170,13 +254,13 @@
                 };
             }
         }
-    });
+    }); */
 
     // Load a drone flight path from a CZML file
-   /* var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
+  // var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
 
     // Save a new drone model entity
-    var drone;
+  /*  var drone;
     dronePromise.then(function(dataSource) {
         viewer.dataSources.add(dataSource);
         // Get the entity using the id defined in the CZML data
@@ -198,7 +282,7 @@
             interpolationDegree : 2
         });
         drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
-    });*/
+    }); */
 
     //////////////////////////////////////////////////////////////////////////
     // Load 3D Tileset
@@ -213,13 +297,13 @@
     //////////////////////////////////////////////////////////////////////////
 
     // Define a white, opaque building style
-    var defaultStyle = new Cesium.Cesium3DTileStyle({
+  /*  var defaultStyle = new Cesium.Cesium3DTileStyle({
         color : "color('white')",
         show : true
     });
 
     // Set the tileset style to default
-    city.style = defaultStyle;
+    neighborhoodsPromise.style = defaultStyle;
 
     // Define a white, transparent building style
     var transparentStyle = new Cesium.Cesium3DTileStyle({
@@ -254,14 +338,14 @@
             city.style = transparentStyle;
         }
     }
-    tileStyle.addEventListener('change', set3DTileStyle);
+    tileStyle.addEventListener('change', set3DTileStyle); */
 
     //////////////////////////////////////////////////////////////////////////
     // Custom mouse interaction for highlighting and selecting
     //////////////////////////////////////////////////////////////////////////
 
     // If the mouse is over a point of interest, change the entity billboard scale and color
-    var previousPickedEntity;
+   /* var previousPickedEntity;
     var handler = viewer.screenSpaceEventHandler;
     handler.setInputAction(function (movement) {
         var pickedPrimitive = viewer.scene.pick(movement.endPosition);
@@ -277,7 +361,7 @@
             pickedEntity.billboard.color = Cesium.Color.ORANGERED;
             previousPickedEntity = pickedEntity;
         }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE); */
 
     //////////////////////////////////////////////////////////////////////////
     // Setup Camera Modes
@@ -310,22 +394,23 @@
     // Setup Display Options
     //////////////////////////////////////////////////////////////////////////
 
-    var shadowsElement = document.getElementById('shadows');
+    //var shadowsElement = document.getElementById('shadows');
     //var neighborhoodsElement =  document.getElementById('neighborhoods');
 
-    shadowsElement.addEventListener('change', function (e) {
+   /* shadowsElement.addEventListener('change', function (e) {
         viewer.shadows = e.target.checked;
-    });
+    }); */
 
     /*neighborhoodsElement.addEventListener('change', function (e) {
         neighborhoods.show = e.target.checked;
     });*/
 
     // Finally, wait for the initial city to be ready before removing the loading indicator.
-    var loadingIndicator = document.getElementById('loadingIndicator');
+    /*var loadingIndicator = document.getElementById('loadingIndicator');
     loadingIndicator.style.display = 'block';
     city.readyPromise.then(function () {
         loadingIndicator.style.display = 'none';
-    });
+    }); */
+    
 
 }());
