@@ -82,14 +82,14 @@
     // Loading and Styling Entity Data
     //////////////////////////////////////////////////////////////////////////
 
-    var kmlOptions = {
+   /* var kmlOptions = {
         camera : viewer.scene.camera,
         canvas : viewer.scene.canvas,
         clampToGround : true
     };
     // Load geocache points of interest from a KML file
     // Data from : http://catalog.opendata.city/dataset/pediacities-nyc-neighborhoods/resource/91778048-3c58-449c-a3f9-365ed203e914
-    var geocachePromise = Cesium.KmlDataSource.load('./Source/SampleData/sampleGeocacheLocations.kml', kmlOptions);
+     var geocachePromise = Cesium.KmlDataSource.load('./Source/SampleData/sampleGeocacheLocations.kml', kmlOptions);
 
     // Add geocache billboard entities to scene and style them
     geocachePromise.then(function(dataSource) {
@@ -120,30 +120,37 @@
                 entity.description = description;
             }
         }
-    });
+    }); */
 
     var geojsonOptions = {
         clampToGround : true
     };
     // Load neighborhood boundaries from a GeoJson file
     // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
-    var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
+    //var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
+   
+    /*const Accept = 'application/json'
+    Axios.defaults.baseURL = 'http://localhost:8000'
+    Axios.defaults.headers = { Accept }*/
+    const overpassApi = Axios.create({ baseURL: 'http://localhost:8000' })
+    var overpassPromise = overpassApi.get('/search', { params: { persist: false, id: '123,456,789' }})
 
     // Save an new entity collection of neighborhood data
-    var neighborhoods;
-    neighborhoodsPromise.then(function(dataSource) {
+    var overpass;
+    overpassPromise.then(function(dataSource) {
+        console.log("connector response",dataSource)
         // Add the new data as entities to the viewer
         viewer.dataSources.add(dataSource);
-        neighborhoods = dataSource.entities;
+        overpass = dataSource.entities;
 
         // Get the array of entities
-        var neighborhoodEntities = dataSource.entities.values;
-        for (var i = 0; i < neighborhoodEntities.length; i++) {
-            var entity = neighborhoodEntities[i];
+        var overpassEntities = dataSource.entities.values;
+        for (var i = 0; i < overpassEntities.length; i++) {
+            var entity = overpassEntities[i];
 
             if (Cesium.defined(entity.polygon)) {
                 // Use kml neighborhood value as entity name
-                entity.name = entity.properties.neighborhood;
+                entity.name = entity.properties.overpass;
                 // Set the polygon material to a random, translucent color
                 entity.polygon.material = Cesium.Color.fromRandom({
                     red : 0.1,
@@ -173,7 +180,7 @@
     });
 
     // Load a drone flight path from a CZML file
-    var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
+    /*var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/sampleFlight.czml');
 
     // Save a new drone model entity
     var drone;
@@ -198,14 +205,14 @@
             interpolationDegree : 2
         });
         drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
-    });
+    }); */
 
     //////////////////////////////////////////////////////////////////////////
     // Load 3D Tileset
     //////////////////////////////////////////////////////////////////////////
 
     // Load the NYC buildings tileset
-    var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(75343) }));
+   /* var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(75343) }));
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -319,7 +326,7 @@
 
     neighborhoodsElement.addEventListener('change', function (e) {
         neighborhoods.show = e.target.checked;
-    });
+    });*/
 
     // Finally, wait for the initial city to be ready before removing the loading indicator.
     var loadingIndicator = document.getElementById('loadingIndicator');
